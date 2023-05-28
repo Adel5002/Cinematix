@@ -1,0 +1,50 @@
+* {
+    font-family: 'Nunito', sans-serif;
+}
+
+/* Movie List */
+.poster-img {
+    width: 70%;
+    height: auto;
+    display: block;
+    border-radius: 13px;
+}
+/* Movie List */
+
+/* Movie Detail */
+.poster-detail {
+    max-width: 300px;
+
+}
+
+.movie-descr {
+    width: 75%;
+}
+
+.img-container {
+    width: 300px;
+
+}
+
+.img-container img {
+    width: 85%;
+    height: auto;
+    display: block;
+}
+
+.carousel-item img{
+    width: 650px;
+    border-radius: 5px;
+}
+
+.commentator-color {
+    color: #808080;
+}
+
+.commentator-name {
+    color: #000000;
+}
+/* Movie Detail */
+
+
+

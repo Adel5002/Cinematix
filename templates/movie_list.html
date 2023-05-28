@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Movies list{% endblock %}
+
+
+{% block content %}
+    <div class="row ">
+        {% for movie in movies %}
+            <div class="col-3">
+                <div class=" movie-card mt-5">
+                    <a href="{{ movie.get_absolute_url }}"><img class="poster-img" src="{{ movie.poster.url }}"></a>
+                    <h3 class="mt-2">{{ movie.title|truncatechars:13 }} </h3>
+
+                </div>
+
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

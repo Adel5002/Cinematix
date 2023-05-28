@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ movies.title }}{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="img-container">
+            <img class="ms-4 mt-5" src="{{ movies.poster.url }}">
+        </div>
+        <div class="col">
+            <h1 class="ms-3 mt-5">{{ movies.title }}</h1>
+            <p class="movie-descr ms-3 mt-3">{{ movies.description }}</p>
+            <h4 class="ms-3 mt-5">About Film</h4>
+            <div class="ms-3">
+                    <p class="about-film"><strong>year</strong>:    {{ movies.year }}</p>
+                    <p class="about-film"><strong>country</strong>:    {{ movies.country }}</p>
+                    {% for directors in movies.directors.all %}
+                                <p class="about-film"><strong>directors</strong>:    {{ directors }}</p>
+                    {% endfor %}
+                    {% for actors in movies.actors.all %}
+                                <p class="about-film"><strong>actors</strong>:    {{ actors }}</p>
+                    {% endfor %}
+                    {% for genre in movies.genre.all %}
+                                <p class="about-film"><strong>genre</strong>:    {{ genre }}</p>
+                    {% endfor %}
+                    <p class="about-film"><strong>world premiere</strong>:    {{ movies.world_premiere }}</p>
+                    <p class="about-film"><strong>budget</strong>:    {{ movies.budget }}</p>
+                    <p class="about-film"><strong>fees in USA</strong>:    {{ movies.fees_in_usa }}</p>
+                    <p class="about-film"><strong>fees in world</strong>:    {{ movies.fees_in_world }}</p>
+            </div>
+        </div>
+        <hr>
+        <div class="col-6 mb-5">
+            <h2>Movie Shots...</h2>
+
+            <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-bs-ride="carousel">
+              <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+              </div>
+              <div class="carousel-inner">
+                  {% for image in movies.movieshots_set.all %}
+                <div class="carousel-item active">
+                    <img src="{{ image.image.url }}" alt="{{ image.description }}">
+                </div>
+                  {% endfor %}
+              </div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
+        </div>
+        <hr>
+        <div class="col-6">
+            <div class="comment-add mt-5 ">
+                <form action="{% url 'add_review' movies.url %}" method="post" id="formReview">
+                    {% csrf_token %}
+                    <input type="hidden" name="parent" id="contactparent">
+                    <div class="form-group">
+                        <label for="contactcomment">
+                            Your comment
+                        </label>
+                        <textarea name="text" id="contactcomment"  rows="5" class="form-control border mb-3"></textarea>
+                    </div>
+                    <button class="btn btn-primary">Add Comment</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-6">
+
+            <div class="comment-section ms-5 mt-5">
+                <h2>Comments...   total comments: {{ movies.review_set.count }}</h2>
+                {% for reviews in movies.get_review %}
+                    <div class="mt-4 commentator-color">commentator: <strong class="commentator-name">{{ reviews.commentator }}</strong></div>
+                    <p class="ms-5">comment: {{ reviews.text }}</p>
+                    <a class="ms-5" href="#formReview" onclick="addReview('{{ reviews.commentator }}', '{{ reviews.id }}')">Reply</a>
+                <div class="ms-5 mb-5 reply-to-review">
+                    {% for rev in reviews.review_set.all %}
+                        <div class="mt-4 commentator-color">&#11177; commentator: <strong class="commentator-name">{{ rev.commentator }}</strong></div>
+                        <p class="ms-5">comment: {{ rev.text }}</p>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+        </div>
+    </div>
+
+<script>
+    function addReview(commentator, id) {
+        document.getElementById("contactparent").value = id;
+        document.getElementById("contactcomment").innerText = `${commentator},`
+    }
+</script>
+{% endblock %}

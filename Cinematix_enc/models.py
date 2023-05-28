@@ -2,6 +2,8 @@ from datetime import date
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
+from django.utils.text import slugify
 
 
 class Category(models.Model):
@@ -11,6 +13,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        self.url = slugify(self.name)
+        super(Category, self).save(*args, **kwargs)
 
 
 class Actor(models.Model):
@@ -30,6 +36,10 @@ class Genre(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        self.url = slugify(self.name)
+        super(Genre, self).save(*args, **kwargs)
 
 
 class Movie(models.Model):
@@ -62,6 +72,16 @@ class Movie(models.Model):
 
     class Meta:
         ordering = ['dateCreation']
+
+    def get_absolute_url(self):
+        return reverse('movie_detail', kwargs={'slug': self.url})
+
+    def get_review(self):
+        return self.review_set.filter(parent__isnull=True)
+
+    def save(self, *args, **kwargs):
+        self.url = slugify(self.title)
+        super(Movie, self).save(*args, **kwargs)
 
 
 class MovieShots(models.Model):
@@ -99,4 +119,4 @@ class Review(models.Model):
     commentator = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
-        return self.movie
+        return self.text
