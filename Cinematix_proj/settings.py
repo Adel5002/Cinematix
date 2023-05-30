@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +23,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-_lvt%uxj6e58#^g94y+mo7+98v^*dgc8ia=4%4x6e9$pa^b4r&'
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -36,10 +40,26 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites',
     'django.contrib.staticfiles',
 
     'Cinematix_enc',
+
+    'django_celery_beat',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
+
+DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER") + '@yandex.ru'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -52,6 +72,21 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'Cinematix_proj.urls'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+EMAIL_HOST = 'smtp.yandex.ru'  # адрес сервера Яндекс-почты для всех один и тот же
+EMAIL_PORT = 465  # порт smtp сервера тоже одинаковый
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_USE_SSL = True
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'username'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 TEMPLATES = [
     {
@@ -70,6 +105,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Cinematix_proj.wsgi.application'
+
+LOGIN_REDIRECT_URL = "/"
+
+SITE_URL = 'http://127.0.0.1:8000'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 
 # Database
@@ -130,3 +172,10 @@ MEDIA_URL = '/media/'
 STATICFILES_DIRS = [
    os.path.join(BASE_DIR, "static"),
 ]
+
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
